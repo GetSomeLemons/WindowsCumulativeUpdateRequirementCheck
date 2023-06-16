@@ -6,11 +6,11 @@ $requiredUpdatesList = New-Object System.Collections.ArrayList
 
 function addItemToRequiredUpdatesList {
     Param (
-		[Parameter(Mandatory = $true)][string]$UpdateTitleEn,
-		[Parameter(Mandatory = $true)][string]$KBNumber,
+	[Parameter(Mandatory = $true)][string]$UpdateTitleEn,
+	[Parameter(Mandatory = $true)][string]$KBNumber,
         [Parameter(Mandatory = $false)][boolean]$Preview = $false, #This is for future use if need arise
         [Parameter(Mandatory = $false)][boolean]$OutOfBand = $false #This is for future use if need arise
-	)
+    )
     
     $updateDate = $UpdateTitleEn.Split("")[0]
 
@@ -62,21 +62,21 @@ function populateListRequiredUpdates {
 #"Borrowed" from Timothy Tibbetts:
 #https://www.majorgeeks.com/content/page/how_to_check_your_windows_update_history_with_powershell.html
 function Get-WuaHistory {
-	$session = (New-Object -ComObject 'Microsoft.Update.Session')
-	$history = $session.QueryHistory("",0,1000) | ForEach-Object {
-        if ($_.ResultCode -eq 2){ #Result code 2 is installed updates without errors
+    $session = (New-Object -ComObject 'Microsoft.Update.Session')
+    $history = $session.QueryHistory("",0,1000) | ForEach-Object {
+        if ($_.ResultCode -eq 2) { #Result code 2 is installed updates without errors
 
-		    $_ | Add-Member -MemberType NoteProperty -Name Result -Value "Installed"
-		    $_ | Add-Member -MemberType NoteProperty -Name UpdateId -Value $_.UpdateIdentity.UpdateId
-		    $_ | Add-Member -MemberType NoteProperty -Name RevisionNumber -Value $_.UpdateIdentity.RevisionNumber
-		    $_ | Add-Member -MemberType NoteProperty -Name Product -Value $Product -PassThru
+            $_ | Add-Member -MemberType NoteProperty -Name Result -Value "Installed"
+	    $_ | Add-Member -MemberType NoteProperty -Name UpdateId -Value $_.UpdateIdentity.UpdateId
+	    $_ | Add-Member -MemberType NoteProperty -Name RevisionNumber -Value $_.UpdateIdentity.RevisionNumber
+	    $_ | Add-Member -MemberType NoteProperty -Name Product -Value $Product -PassThru
         }
-	}
+    }
 
-	#Remove null records and only return the fields we want
-	$history |
-	Where-Object {![String]::IsNullOrWhiteSpace($_.title)} |
-	Select-Object Result, Date, Title, SupportUrl, UpdateId, RevisionNumber
+    #Remove null records and only return the fields we want
+    $history |
+    Where-Object {![String]::IsNullOrWhiteSpace($_.title)} |
+    Select-Object Result, Date, Title, SupportUrl, UpdateId, RevisionNumber
 }
 
 
